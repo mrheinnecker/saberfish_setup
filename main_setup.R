@@ -3,7 +3,7 @@ library(gridExtra)
 library(grid)
 library(googlesheets4)
 opt <- list(
-  run="SF07",
+  run="SF08",
   nmol_conc=150
 )
 
@@ -126,9 +126,12 @@ sf_plan %>%
 
 
 
-
+prefix <- textGrob(
+  paste("\n\n\n",opt$run),
+  gp = gpar(fontsize = 16, fontface = "bold")
+)
 title1 <- textGrob(
-  paste(opt$run, "primary hybridisation setup"),
+  paste("\n\nprimary hybridisation setup"),
   gp = gpar(fontsize = 16, fontface = "bold")
 )
 
@@ -141,7 +144,7 @@ tbl1_grob <- tableGrob(
   
 
 title2 <- textGrob(
-  paste(opt$run, "Secondary fluorostaining setup"),
+  paste("\n\nsecondary fluorostaining setup"),
   gp = gpar(fontsize = 16, fontface = "bold")
 )
 
@@ -152,15 +155,24 @@ tbl2_grob <- tableGrob(
   theme = ttheme_default(base_size = 9)
 )
   
-pdf("/g/schwab/marco/table.pdf", width = 10, height = 4)
+
+suffix=textGrob(
+  paste("input parameters for:\nhttps://github.com/mrheinnecker/saberfish_setup",
+        "\nrun-id: ", opt$run, "nmol_conc:", opt$nmol_conc, "\n"),
+  gp = gpar(fontsize = 8, fontface = "bold")
+)
+
+pdf(paste0("/g/schwab/marco/projects/osFISH/saberfish_setups/",opt$run,".pdf"), width = 10, height = 6)
 
 
   grid.arrange(
+    prefix,
     title1,
     tbl1_grob,
     title2,
     tbl2_grob,
-    heights=c(0.1,1,0.1,1)
+    suffix,
+    heights=c(0.5,0.05,1,0.05,1, 0.3)
   )
 dev.off()
 
