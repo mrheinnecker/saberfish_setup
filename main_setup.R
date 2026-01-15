@@ -83,7 +83,8 @@ names_converter <- tibble(old=names(primary_ov_pre)) %>%
 
 
 primary_ov <- primary_ov_pre %>%
-  set_names(nm=names_converter$new)
+  set_names(nm=names_converter$new) %>%
+  arrange(wells)
 
 
 secondary_ov <- 
@@ -92,7 +93,7 @@ sf_plan %>%
   mutate(primers=paste(unlist(str_extract_all(probes, paste0("p",seq(10,60),collapse="|"))),collapse=", "),
          cond_pairs_id=str_remove(condition, "_T$|_C$")) %>%
   group_by(cond_pairs_id) %>%
-  summarize(
+  reframe(
     pair_vol=sum(vol),
     primers=primers %>% .[which(.!="NA")],
     wells=paste(well, collapse=", ")
@@ -120,7 +121,8 @@ sf_plan %>%
   ) %>%
   mutate(nfw=tot_vol-probe_vol) %>%
   mutate_all(~ ifelse(is.na(.), "-", .)) %>%
-  select(-probe_vol)
+  select(-probe_vol)%>%
+  arrange(wells)
 
 
 
